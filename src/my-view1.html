@@ -1,0 +1,117 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .delete-button {
+        float: right;
+        background: red;
+        color: white;
+        display: inline-block;
+      }
+      .todo {
+        display: inline-block;
+        width: 80%;
+      }
+      .container-task {
+        margin: 15px;
+      }
+      .create-button {
+        background: #72f472;
+        width: 100%;
+      }
+      .input-cont {
+        margin: 20px;
+      }
+    </style>
+
+    <div class="input-cont">
+      <paper-input-container always-float-label="true">
+        <label slot="label">New task</label>
+        <input is="iron-input" slot="input" value="{{search::input}}"></input>
+      </paper-input-container>
+
+      <paper-button
+        class="create-button"
+        on-tap="_createTask"
+        data-value="{{computerFilter(search)}}">Create Task
+      </paper-button>
+    </div>
+
+      <div class="card">
+
+        <template is="dom-repeat" items="[[todoList]]" as="todo">
+          <div class="">
+            <paper-checkbox></paper-checkbox>
+            <span class="todo">[[todo]]</span>
+            <paper-button
+              class="delete-button"
+              on-tap="_deleteTask"
+              data-value="{{$event}}">Delete
+            </paper-button>
+            <br><br><br>
+          </div>
+
+        </template>
+      </div>
+
+  </template>
+
+  <script>
+    class MyView1 extends Polymer.Element {
+      static get is() { return 'my-view1'; }
+
+      static get properties() {
+        return {
+          newTask: {
+            type: String,
+            value: '',
+            notify: true
+          },
+          todoList: {
+            type: Array,
+            value: () => [],
+            notify: true
+          }
+        }
+      }
+
+      computerFilter(search) {
+        if (!search) {
+          return null;
+        } else {
+          return this.newTask = search;
+        }
+      }
+
+      _createTask(e) {
+        this.search = '';
+        this.push('todoList', this.newTask);
+        this.set('newTask' , '');
+      }
+
+      _deleteTask(e) {
+        console.log(e.model);
+        this.splice('todoList', e.model.index, 1);
+      }
+
+    }
+
+    window.customElements.define(MyView1.is, MyView1);
+  </script>
+</dom-module>
